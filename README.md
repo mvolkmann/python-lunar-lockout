@@ -7,9 +7,12 @@ can be found at <https://www.thinkfun.com/products/lunar-landing/>.
 
 ## Installs
 
+Which of these are actually being used?
+
 - `pip install keras`
 - `pip install matplotlib`
 - `pip install numpy`
+- `pip install torch`
 
 ## To run
 

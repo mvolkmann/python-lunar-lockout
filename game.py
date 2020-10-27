@@ -1,6 +1,7 @@
 import math
+import random
 # import sys
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 # import matplotlib as mlp
 # from matplotlib.pylab import rand
@@ -11,6 +12,7 @@ SIZE = 5
 CENTER = math.floor(SIZE / 2)
 TARGET = '#'
 
+Action = Tuple[str, str] # letter and direction
 Board = List[List[str]]
 Position = Tuple[int, int]
 Robots = Dict[str, Position]
@@ -49,7 +51,7 @@ robots: Robots = {
 }
 letters = robots.keys()
 
-def can_move(letter: str, direction: str):
+def can_move(letter: str, direction: str) -> bool:
     validate_letter(letter)
     validate_direction(direction)
     column, row = robots[letter]
@@ -84,7 +86,7 @@ def can_move(letter: str, direction: str):
 #     ax.imshow(r, interpolation='nearest')
 #     plt.show()
 
-def get_board(robots: Robots):
+def get_board(robots: Robots) -> Board:
     board = [[' '] * SIZE for _ in range(SIZE)]
     board[CENTER][CENTER] = TARGET
 
@@ -94,12 +96,12 @@ def get_board(robots: Robots):
             board[row][column] = letter
     return board
 
-def get_distance():
+def get_distance() -> float:
     """Get distance from red robot to target."""
     column, row = robots['R']
     return math.hypot(column - CENTER, row - CENTER)
 
-def get_actions():
+def get_possible_actions() -> List[Action]:
     """Get all possible actions."""
     actions = []
     for letter in letters:
@@ -108,7 +110,20 @@ def get_actions():
                 actions.append((letter, direction))
     return actions
 
-def move_robot(letter: str, direction: str):
+def get_random_action() -> Optional[Action]:
+    actions = get_possible_actions()
+    if len(actions) == 0:
+        return None
+
+    # Prefer to move R if possible.
+    r_actions = filter(lambda a: a[0] == 'R', actions)
+    first_r_action = next(r_actions, None)
+    if first_r_action:
+        return first_r_action
+
+    return random.choice(actions)
+
+def move_robot(letter: str, direction: str) -> None:
     validate_letter(letter)
     validate_direction(direction)
     print('moving robot', letter, direction_map[direction])
@@ -145,27 +160,27 @@ def move_robot(letter: str, direction: str):
         else:
             raise Exception('invalid move')
 
-def print_board(board: Board):
+def print_board(board: Board) -> None:
     border = '+---' * SIZE + '+'
     for row in board:
         print(border)
         print('| ' + ' | '.join(row) + ' |')
     print(border)
 
-def valid_cell(column: int, row: int):
+def solved() -> bool:
+    column, row = robots['R']
+    return column == CENTER and row == CENTER
+
+def valid_cell(column: int, row: int) -> bool:
     return 0 <= column < SIZE and 0 <= row < SIZE
 
-def validate_direction(direction: str):
+def validate_direction(direction: str) -> None:
     if not direction in directions:
         raise ValueError('invalid direction ' + direction)
 
-def validate_letter(letter: str):
+def validate_letter(letter: str) -> None:
     if not letter in letters:
         raise ValueError('invalid robot letter ' + letter)
-
-def won():
-    column, row = robots['R']
-    return column == CENTER and row == CENTER
 
 board = get_board(robots)
 
@@ -173,8 +188,6 @@ board = get_board(robots)
 # sys.exit()
 
 print_board(board)
-actions = get_actions()
-print('game.py x: actions =', actions)
 
 # print(can_move('R', 'U'))
 # print(can_move('R', 'D'))
@@ -186,9 +199,20 @@ print('game.py x: actions =', actions)
 # move_robot('R', 'D')
 # move_robot('R', 'L')
 
-move_robot('P', 'U')
-move_robot('G', 'R')
-move_robot('R', 'L')
-move_robot('R', 'U')
-if won():
-    print('You win!')
+# Solution
+# move_robot('P', 'U')
+# move_robot('G', 'R')
+# move_robot('R', 'L')
+# move_robot('R', 'U')
+# if solved():
+#     print('You win!')
+
+while True:
+    action = get_random_action()
+    if action is None:
+        print('Failed to find solution.')
+        break
+    move_robot(*action)
+    if solved():
+        print('Solution found!')
+        break
