@@ -83,8 +83,8 @@ def print_action(label: str, action: Action) -> None:
     index, direction = action
     print(label, robot_names[index], direction_map[direction])
 
-def print_actions(actions: List[Action]) -> None:
-    print('Actions:')
+def print_actions(label: str, actions: List[Action]) -> None:
+    print(label)
     for action in actions:
         print_action('  ', action)
 
@@ -98,13 +98,13 @@ def print_board(robots: Robots) -> None:
         print(s)
     print(border)
 
-def solve(robots: Robots, depth: int = 0) -> None:
+def solve(robots: Robots, solution: List[Action] = []) -> None:
     global solved
 
-    print_board(robots)
+    # print_board(robots)
     if is_solved(robots):
         solved = True  # prevents further actions
-        print('Solved!')
+        print_actions('\nSolution:', solution)
         return
 
     actions = get_possible_actions(robots)
@@ -115,18 +115,19 @@ def solve(robots: Robots, depth: int = 0) -> None:
         if solved:
             return
         new_robots = take_action(action, robots)
-        solve(new_robots, depth + 1)  # recursive call
+        solve(new_robots, [*solution, action])  # recursive call
 
 def is_solved(robots: Robots) -> bool:
     column, row = robots[0]  # red robot
     return column == CENTER and row == CENTER
 
 def take_action(action: Action, robots: Robots) -> Robots:
+    print('.', end='')
+
     robot_index, direction = action
     validate_direction(direction)
 
-    robot_name = robot_names[robot_index]
-    print('moving', robot_name, 'robot', direction_map[direction])
+    #print('moving', robot_names[robot_index], 'robot', direction_map[direction])
     column, row = robots[robot_index]
 
     # Find the robot that will block the move.
