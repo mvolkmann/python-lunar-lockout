@@ -1,15 +1,19 @@
 # global-statement: Using the global statement
 # pylint: disable=W0603
 
+import csv
 import math
+#import sys
 from typing import List, Tuple
+
+# sys.setrecursionlimit(50000)
 
 SIZE = 5
 CENTER = math.floor(SIZE / 2)
 TARGET = '#'
 
 Action = Tuple[int, str]  # robot index and direction
-Position = Tuple[int, int]  # column and row indexes
+Position = Tuple[int, int]  # column and row zero-based indexes
 robot_ids = ('R', 'O', 'Y', 'G', 'B', 'P')
 robot_names = ('red', 'orange', 'yellow', 'green', 'blue', 'purple')
 # Order of robots in list is same as order of robot_ids.
@@ -29,17 +33,6 @@ direction_map = {
     'U': 'up'
 }
 directions = direction_map.keys()
-
-# List of robot data which includes the
-# zero-based column and row of each robot.
-robots: Robots = [
-    (4, 4),
-    (3, 0),
-    (1, 4),
-    (1, 1),
-    (-1, -1),
-    (3, 3)
-]
 
 solved = False
 
@@ -173,4 +166,24 @@ def validate_direction(direction: str) -> None:
     if not direction in directions:
         raise ValueError('invalid direction ' + direction)
 
-solve(robots)
+puzzles = {}
+with open('puzzles.csv') as csvfile:
+    reader = csv.reader(csvfile)
+    for row in reader:
+        number, rx, ry, ox, oy, yx, yy, gx, gy, bx, by, px, py = row
+        robots = [
+            (int(rx), int(ry)),  # red
+            (int(ox), int(oy)),  # orange
+            (int(yx), int(yy)),  # yellow
+            (int(gx), int(gy)),  # orange
+            (int(bx), int(by)),  # blue
+            (int(px), int(py))  # purple
+        ]
+        puzzles[int(number)] = robots
+
+for game in range(len(puzzles)):
+    robots = puzzles[game + 1]
+    print('\nGame #' + str(game + 1))
+    print_board(robots)
+    solved = False
+    solve(robots)
