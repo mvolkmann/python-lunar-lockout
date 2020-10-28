@@ -4,7 +4,7 @@
 import csv
 import math
 #import sys
-from typing import Any, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 # sys.setrecursionlimit(50000)
 
@@ -101,9 +101,29 @@ def is_solved(robots: Robots) -> bool:
     column, row = robots[0]  # red robot
     return column == CENTER and row == CENTER
 
+def load_puzzles(file_path: str) -> Dict[int, Robots]:
+    puzzles = {}
+    with open(file_path) as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            number, rx, ry, ox, oy, yx, yy, gx, gy, bx, by, px, py = row
+            robots = [
+                make_position(rx, ry),  # red
+                make_position(ox, oy),  # orange
+                make_position(yx, yy),  # yellow
+                make_position(gx, gy),  # green
+                make_position(bx, by),  # blue
+                make_position(px, py)  # purple
+            ]
+            puzzles[int(number)] = robots
+    return puzzles
+
 def log(*args: Any) -> None:
     if DEBUG:
         print(*args)
+
+def make_position(x: str, y: str) -> Position:
+    return (int(x) - 1, int(y) - 1)
 
 def print_action(label: str, action: Action) -> None:
     index, direction = action
@@ -211,20 +231,7 @@ def valid_cell(column: int, row: int) -> bool:
 #     if not direction in directions:
 #         raise ValueError('invalid direction ' + direction)
 
-puzzles = {}
-with open('puzzles.csv') as csvfile:
-    reader = csv.reader(csvfile)
-    for row in reader:
-        number, rx, ry, ox, oy, yx, yy, gx, gy, bx, by, px, py = row
-        robots = [
-            (int(rx), int(ry)),  # red
-            (int(ox), int(oy)),  # orange
-            (int(yx), int(yy)),  # yellow
-            (int(gx), int(gy)),  # orange
-            (int(bx), int(by)),  # blue
-            (int(px), int(py))  # purple
-        ]
-        puzzles[int(number)] = robots
+puzzles = load_puzzles('puzzles.csv')
 
 for game in range(len(puzzles)):
     robots = puzzles[game + 1]
