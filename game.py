@@ -40,11 +40,6 @@ solved = False
 
 def can_move(robots: Robots, robot_index: int, direction: str) -> bool:
     # validate_direction(direction)
-
-    log('\ngame.py can_move: robots =', robots)
-    log('game.py can_move: robot_index =', robot_index)
-    log('game.py can_move: direction =', direction)
-
     column, row = robots[robot_index]
 
     can = False
