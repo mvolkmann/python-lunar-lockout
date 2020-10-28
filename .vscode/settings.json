@@ -8,6 +8,7 @@
     "pylab",
     "pylint",
     "pyplot",
+    "unsubscriptable",
     "xaxis",
     "yaxis"
   ]

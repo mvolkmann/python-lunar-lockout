@@ -1,19 +1,20 @@
 import csv
 import math
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 from util import log
+
+Action = Tuple[int, str]  # robot index and direction
+Position = Tuple[int, int]  # column and row one-based indexes
+State = List[Position]  # list of robot positions
 
 DEBUG = False
 SIZE = 5
 CENTER = math.ceil(SIZE / 2)
 TARGET = '#'
 
-Action = Tuple[int, str]  # robot index and direction
-Position = Tuple[int, int]  # column and row one-based indexes
+# Order of robots in State is same as order of robot_ids.
 robot_ids = ('R', 'O', 'Y', 'G', 'B', 'P')
 robot_names = ('red', 'orange', 'yellow', 'green', 'blue', 'purple')
-# Order of robots in list is same as order of robot_ids.
-State = List[Position]  # list of robot positions
 
 # These are dx and dy values for directions.
 direction_deltas = {
@@ -74,6 +75,10 @@ def _print_action(label: str, action: Action) -> None:
     index, direction = action
     print(label, robot_names[index], direction_map[direction])
 
+# def _validate_direction(direction: str) -> None:
+#     if not direction in directions:
+#         raise ValueError('invalid direction ' + direction)
+
 class LunarLockout:
     @staticmethod
     def get_possible_actions(robots: State) -> List[Action]:
@@ -97,14 +102,13 @@ class LunarLockout:
             for row in reader:
                 number, coords = row
                 if not number.startswith('#'):
-                    rx, ry, ox, oy, yx, yy, gx, gy, bx, by, px, py = coords
                     robots = [
-                        _make_position(rx, ry),  # red
-                        _make_position(ox, oy),  # orange
-                        _make_position(yx, yy),  # yellow
-                        _make_position(gx, gy),  # green
-                        _make_position(bx, by),  # blue
-                        _make_position(px, py)  # purple
+                        _make_position(coords[0], coords[1]),  # red
+                        _make_position(coords[2], coords[3]),  # orange
+                        _make_position(coords[4], coords[5]),  # yellow
+                        _make_position(coords[6], coords[7]),  # green
+                        _make_position(coords[8], coords[9]),  # blue
+                        _make_position(coords[10], coords[11])  # purple
                     ]
                     puzzles[int(number)] = robots
         return puzzles
@@ -132,49 +136,44 @@ class LunarLockout:
 
     @staticmethod
     def take_action(action: Action, robots: State) -> State:
-        #print('.', end='')
+        # print('.', end='') # prints a dot for each action attempted
 
         robot_index, direction = action
-        # validate_direction(direction)
+        # _validate_direction(direction)
 
         log(DEBUG, 'moving',
             robot_names[robot_index], direction_map[direction])
 
         column, row = robots[robot_index]
 
-        # Find the CLOSEST robot that will block the move.
-        blocker = None
+        # Find the closest robot that will block the move.
+        blocker: Optional[Position] = None
+        # Avoid the false positive error about
+        # blocker being an unsubscriptable object.
+        # pylint: disable=E1136
         for index, position in enumerate(robots):
             if index == robot_index:
                 continue
             c, r = position
 
             if direction == 'U' and c == column and r < row - 1:
-                if not blocker or r > blocker[1]:
+                if blocker is None or r > blocker[1]:
                     blocker = position
             elif direction == 'D' and c == column and r > row + 1:
-                if not blocker or r < blocker[1]:
+                if blocker is None or r < blocker[1]:
                     blocker = position
             elif direction == 'L' and r == row and c < column - 1:
-                if not blocker or c > blocker[0]:
+                if blocker is None or c > blocker[0]:
                     blocker = position
             elif direction == 'R' and r == row and c > column + 1:
-                if not blocker or c < blocker[0]:
+                if blocker is None or c < blocker[0]:
                     blocker = position
 
-        if not blocker:
+        if blocker is None:
             raise ValueError('invalid move')
 
         new_robots = robots.copy()
-        #c, r = blocker
-        c = blocker[0]
-        r = blocker[1]
-        if direction == 'U':
-            new_robots[robot_index] = (c, r + 1)
-        elif direction == 'D':
-            new_robots[robot_index] = (c, r - 1)
-        elif direction == 'L':
-            new_robots[robot_index] = (c + 1, r)
-        elif direction == 'R':
-            new_robots[robot_index] = (c - 1, r)
+        c, r = blocker
+        dx, dy = direction_deltas[direction]
+        new_robots[robot_index] = (c - dx, r - dy)
         return new_robots

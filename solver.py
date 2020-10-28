@@ -1,3 +1,6 @@
+# global-statement: Using the global statement
+# pylint: disable=W0603
+
 from typing import List
 from lunar_lockout import Action, LunarLockout as Game, State
 
@@ -13,11 +16,7 @@ def have_seen(state: State) -> bool:
         states_seen.add(key)
     return seen
 
-def optimize_solution(solution: List[Action]) -> List[Action]:
-    # TODO: Remove unnecesary moves.
-    return solution
-
-def solve(state: State, solution: List[Action] = [], depth: int = 0) -> None:
+def solve(state: State, solution: List[Action], depth: int = 0) -> None:
     global solved
 
     if have_seen(state):
@@ -50,7 +49,7 @@ for puzzle in range(len(puzzles)):
     Game.print_state(state)
     solved = False
     states_seen = set()
-    solve(state)
+    solve(state, [])
 
 # Solve a single puzzle instead of all.
 # state = puzzles[1]
