@@ -1,12 +1,10 @@
 # global-statement: Using the global statement
 # pylint: disable=W0603
 
-from typing import List
+from typing import List, Set
 from lunar_lockout import Action, LunarLockout as Game, State
 
 DEBUG = False
-solved = False
-states_seen = set()
 
 def have_seen(state: State) -> bool:
     global states_seen
@@ -37,10 +35,6 @@ def solve(state: State, solution: List[Action], depth: int = 0) -> None:
         new_state = Game.take_action(action, state)
         solve(new_state, [*solution, action], depth + 1)  # recursive call
 
-# def validate_direction(direction: str) -> None:
-#     if not direction in directions:
-#         raise ValueError('invalid direction ' + direction)
-
 puzzles = Game.load_puzzles('puzzles.csv')
 
 for puzzle in range(len(puzzles)):
@@ -48,7 +42,7 @@ for puzzle in range(len(puzzles)):
     print('\nPuzzle #' + str(puzzle + 1))
     Game.print_state(state)
     solved = False
-    states_seen = set()
+    states_seen: Set[str] = set()
     solve(state, [])
 
 # Solve a single puzzle instead of all.

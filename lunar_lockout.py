@@ -1,7 +1,6 @@
 import csv
 import math
 from typing import Dict, List, Optional, Tuple
-from util import log
 
 Action = Tuple[int, str]  # robot index and direction
 Position = Tuple[int, int]  # column and row one-based indexes
@@ -32,7 +31,6 @@ direction_map = {
 directions = direction_map.keys()
 
 def _can_move(robots: State, robot_index: int, direction: str) -> bool:
-    # validate_direction(direction)
     column, row = robots[robot_index]
 
     can = False
@@ -74,10 +72,6 @@ def _make_position(x: str, y: str) -> Position:
 def _print_action(label: str, action: Action) -> None:
     index, direction = action
     print(label, robot_names[index], direction_map[direction])
-
-# def _validate_direction(direction: str) -> None:
-#     if not direction in directions:
-#         raise ValueError('invalid direction ' + direction)
 
 class LunarLockout:
     @staticmethod
@@ -136,13 +130,12 @@ class LunarLockout:
 
     @staticmethod
     def take_action(action: Action, robots: State) -> State:
-        # print('.', end='') # prints a dot for each action attempted
+        # print('.', end='') # print a dot for each action attempted
 
         robot_index, direction = action
-        # _validate_direction(direction)
 
-        log(DEBUG, 'moving',
-            robot_names[robot_index], direction_map[direction])
+        if DEBUG:
+            print('moving', robot_names[robot_index], direction_map[direction])
 
         column, row = robots[robot_index]
 
