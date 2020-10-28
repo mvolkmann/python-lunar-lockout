@@ -1,9 +1,7 @@
-from typing import Any, List
+from typing import List
 from lunar_lockout import Action, LunarLockout as Game, State
 
 DEBUG = False
-State = Any
-
 solved = False
 states_seen = set()
 
@@ -31,9 +29,6 @@ def solve(state: State, solution: List[Action] = [], depth: int = 0) -> None:
         return
 
     actions = Game.get_possible_actions(state)
-
-    if len(actions) == 0:
-        return
 
     for action in actions:
         if solved:
