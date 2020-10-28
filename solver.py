@@ -6,18 +6,18 @@ from lunar_lockout import Action, LunarLockout as Game, State
 
 DEBUG = False
 
-def have_seen(state: State) -> bool:
-    global states_seen
+def visited(state: State) -> bool:
+    global visited_states
     key = Game.state_string(state)
-    seen = key in states_seen
+    seen = key in visited_states
     if not seen:
-        states_seen.add(key)
+        visited_states.add(key)
     return seen
 
-def solve(state: State, solution: List[Action], depth: int = 0) -> None:
+def solve(state: State, solution: List[Action]) -> None:
     global solved
 
-    if have_seen(state):
+    if visited(state):
         return
 
     if Game.is_solved(state):
@@ -33,19 +33,19 @@ def solve(state: State, solution: List[Action], depth: int = 0) -> None:
         if DEBUG:
             Game.print_state(state)
         new_state = Game.take_action(action, state)
-        solve(new_state, [*solution, action], depth + 1)  # recursive call
+        solve(new_state, [*solution, action])  # recursive call
 
 puzzles = Game.load_puzzles('puzzles.csv')
 
-for puzzle in range(len(puzzles)):
-    state = puzzles[puzzle + 1]
-    print('\nPuzzle #' + str(puzzle + 1))
+for i in range(1, len(puzzles) + 1):
+    state = puzzles[i]
+    print('\nPuzzle #' + str(i))
     Game.print_state(state)
     solved = False
-    states_seen: Set[str] = set()
+    visited_states: Set[str] = set()
     solve(state, [])
 
 # Solve a single puzzle instead of all.
 # state = puzzles[1]
 # print_puzzle(state)
-# solve(state)
+# solve(state, [])
