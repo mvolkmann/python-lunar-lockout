@@ -7,6 +7,7 @@ from lunar_lockout import Action, LunarLockout as Game, State
 DEBUG = False
 
 def visited(state: State) -> bool:
+    """Determine if a given State has already been visited."""
     global visited_states
     key = Game.state_string(state)
     seen = key in visited_states
@@ -15,6 +16,7 @@ def visited(state: State) -> bool:
     return seen
 
 def solve(state: State, solution: List[Action]) -> None:
+    """Solve a puzzle with given starting State."""
     global solved
 
     if visited(state):

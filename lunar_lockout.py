@@ -31,6 +31,7 @@ direction_map = {
 directions = direction_map.keys()
 
 def _can_move(robots: State, robot_index: int, direction: str) -> bool:
+    """Determine whether a robot can move in a direction in a given State."""
     column, row = robots[robot_index]
 
     can = False
@@ -59,6 +60,7 @@ def _can_move(robots: State, robot_index: int, direction: str) -> bool:
     return can
 
 def _get_cell(robots: State, column: int, row: int) -> str:
+    """Get the character to print for a given board cell."""
     for index, position in enumerate(robots):
         c, r = position
         if c == column and r == row:
@@ -67,15 +69,18 @@ def _get_cell(robots: State, column: int, row: int) -> str:
     return '#' if is_center else ' '
 
 def _make_position(x: str, y: str) -> Position:
+    """Create a Position for x and y string values."""
     return (int(x), int(y))
 
 def _print_action(label: str, action: Action) -> None:
+    """Print a given Action."""
     index, direction = action
     print(label, robot_names[index], direction_map[direction])
 
 class LunarLockout:
     @staticmethod
     def get_possible_actions(robots: State) -> List[Action]:
+        """Get all the possible actions that can be taken in a given State."""
         actions = []
         for robot_index in range(len(robots)):
             for direction in directions:
@@ -85,11 +90,13 @@ class LunarLockout:
 
     @staticmethod
     def is_solved(robots: State) -> bool:
+        """Determine if a State represents a solved puzzle."""
         column, row = robots[0]  # red robot
         return column == CENTER and row == CENTER
 
     @staticmethod
     def load_puzzles(file_path: str) -> Dict[int, State]:
+        """Load a set of puzzles from a file."""
         puzzles = {}
         with open(file_path) as csvfile:
             reader = csv.reader(csvfile)
@@ -109,12 +116,14 @@ class LunarLockout:
 
     @staticmethod
     def print_actions(label: str, actions: List[Action]) -> None:
+        """Print a list of Actions."""
         print(label)
         for action in actions:
             _print_action('  ', action)
 
     @staticmethod
     def print_state(robots: State) -> None:
+        """Print a State."""
         border = '+---' * SIZE + '+'
         for row in range(1, SIZE + 1):
             print(border)
@@ -126,10 +135,12 @@ class LunarLockout:
 
     @staticmethod
     def state_string(robots: State) -> str:
+        """Get the string representation of a State."""
         return ''.join(map(lambda pos: f'{pos[0]}{pos[1]}', robots))
 
     @staticmethod
     def take_action(action: Action, robots: State) -> State:
+        """Take an Action on a State and return a new State."""
         # print('.', end='') # print a dot for each action attempted
 
         robot_index, direction = action
