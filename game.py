@@ -10,11 +10,11 @@ from typing import Any, Dict, List, Tuple
 
 DEBUG = False
 SIZE = 5
-CENTER = math.floor(SIZE / 2)
+CENTER = math.ceil(SIZE / 2)
 TARGET = '#'
 
 Action = Tuple[int, str]  # robot index and direction
-Position = Tuple[int, int]  # column and row zero-based indexes
+Position = Tuple[int, int]  # column and row one-based indexes
 robot_ids = ('R', 'O', 'Y', 'G', 'B', 'P')
 robot_names = ('red', 'orange', 'yellow', 'green', 'blue', 'purple')
 # Order of robots in list is same as order of robot_ids.
@@ -59,7 +59,6 @@ def can_move(robots: Robots, robot_index: int, direction: str) -> bool:
             (direction == 'L' and r == row and c == column - 1) or \
             (direction == 'R' and r == row and c == column + 1)
         if adjacent:
-            # print('game.py can_move: adjacent')
             return False
 
         blocks: bool = \
@@ -125,7 +124,7 @@ def log(*args: Any) -> None:
         print(*args)
 
 def make_position(x: str, y: str) -> Position:
-    return (int(x) - 1, int(y) - 1)
+    return (int(x), int(y))
 
 def optimize_solution(solution: List[Action]) -> List[Action]:
     # TODO: Remove unnecesary moves.
@@ -143,10 +142,10 @@ def print_actions(label: str, actions: List[Action]) -> None:
 def print_board(robots: Robots) -> None:
     log(to_string(robots))
     border = '+---' * SIZE + '+'
-    for row in range(SIZE):
+    for row in range(1, SIZE + 1):
         print(border)
         s = '|'
-        for column in range(SIZE):
+        for column in range(1, SIZE + 1):
             s += ' ' + get_cell(robots, column, row) + ' |'
         print(s)
     print(border)
@@ -248,6 +247,6 @@ for game in range(len(puzzles)):
     solve(robots)
 
 # Solve a single puzzle instead of all.
-# robots = puzzles[9]
+# robots = puzzles[1]
 # print_board(robots)
 # solve(robots)
