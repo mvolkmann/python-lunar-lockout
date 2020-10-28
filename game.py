@@ -106,16 +106,18 @@ def load_puzzles(file_path: str) -> Dict[int, Robots]:
     with open(file_path) as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            number, rx, ry, ox, oy, yx, yy, gx, gy, bx, by, px, py = row
-            robots = [
-                make_position(rx, ry),  # red
-                make_position(ox, oy),  # orange
-                make_position(yx, yy),  # yellow
-                make_position(gx, gy),  # green
-                make_position(bx, by),  # blue
-                make_position(px, py)  # purple
-            ]
-            puzzles[int(number)] = robots
+            number, coords = row
+            if not number.startswith('#'):
+                rx, ry, ox, oy, yx, yy, gx, gy, bx, by, px, py = coords
+                robots = [
+                    make_position(rx, ry),  # red
+                    make_position(ox, oy),  # orange
+                    make_position(yx, yy),  # yellow
+                    make_position(gx, gy),  # green
+                    make_position(bx, by),  # blue
+                    make_position(px, py)  # purple
+                ]
+                puzzles[int(number)] = robots
     return puzzles
 
 def log(*args: Any) -> None:
@@ -124,6 +126,10 @@ def log(*args: Any) -> None:
 
 def make_position(x: str, y: str) -> Position:
     return (int(x) - 1, int(y) - 1)
+
+def optimize_solution(solution: List[Action]) -> List[Action]:
+    # TODO: Remove unnecesary moves.
+    return solution
 
 def print_action(label: str, action: Action) -> None:
     index, direction = action
