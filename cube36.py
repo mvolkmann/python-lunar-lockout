@@ -1,6 +1,6 @@
 from itertools import permutations
 #import sys
-from typing import Iterator, List, Tuple
+from typing import List, Tuple
 
 Permutation = Tuple[int, ...]
 Permutations = List[Permutation]
@@ -15,18 +15,13 @@ BOARD_HEIGHTS = [
     '241635',
     '364521'
 ]
-
-SIZE = len(BOARD_HEIGHTS)
 COLORS = ['R', 'O', 'Y', 'G', 'B', 'P']
-LENGTHS = range(1, SIZE + 1)
+SIZE = len(BOARD_HEIGHTS)
 
 # There are 720 of these which is SIZE factorial.
-# Can only iterate over an iterator once.
+# We can only iterate over an iterator once.
 # Realizing this as a list enables iterating over multiple times.
 size_permutations: Permutations = list(permutations(range(1, SIZE + 1)))
-
-# Pick the first SIZE of these with no column duplications.
-perms: Permutations = []
 
 def is_solution(perms: Permutations) -> bool:
     pieces = set()
@@ -57,6 +52,8 @@ def unique(perm: Permutation):
                 return False
     return True
 
+# Pick the first SIZE of these with no column duplications.
+perms: Permutations = []
 for i in range(SIZE):
     for perm in size_permutations:
         if unique(perm):
