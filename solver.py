@@ -37,7 +37,7 @@ def solve(state: State, solution: List[Action]) -> None:
         new_state = Game.take_action(action, state)
         solve(new_state, [*solution, action])  # recursive call
 
-puzzles = Game.load_puzzles('puzzles.csv')
+puzzles = Game.load_puzzles('lunar_lockout.csv')
 
 for i in range(1, len(puzzles) + 1):
     state = puzzles[i]
