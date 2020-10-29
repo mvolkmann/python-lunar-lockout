@@ -1,5 +1,5 @@
 from itertools import permutations
-#import sys
+import sys
 from typing import List, Tuple
 
 Permutation = Tuple[int, ...]
@@ -23,17 +23,6 @@ SIZE = len(BOARD_HEIGHTS)
 # Realizing this as a list enables iterating over multiple times.
 size_permutations: Permutations = list(permutations(range(1, SIZE + 1)))
 
-def is_solution(perms: Permutations) -> bool:
-    pieces = set()
-    for row, pick in enumerate(perms):
-        board_row = BOARD_HEIGHTS[row]
-        for column in range(SIZE):
-            index = pick[column]
-            color = COLORS[index - 1]
-            height = board_row[column]
-            pieces.add(color + height)
-    return len(pieces) == SIZE * SIZE
-
 def print_board(perms: Permutations) -> None:
     for row, perm in enumerate(perms):
         board_row = BOARD_HEIGHTS[row]
@@ -45,20 +34,42 @@ def print_board(perms: Permutations) -> None:
             s += color + height + ' '
         print(s)
 
-def unique(perm: Permutation):
-    for other_perm in perms:
-        for i in range(SIZE):
-            if other_perm[i] == perm[i]:
-                return False
-    return True
+def solution(perms: Permutations) -> bool:
+    # Verify that there are no duplicate colors in any column.
+    for column in range(SIZE):
+        color_indexes = set()
+        for perm in perms:
+            color_indexes.add(perm[column])
+        if len(color_indexes) != len(perms):
+            return False
 
-# Pick the first SIZE of these with no column duplications.
-perms: Permutations = []
-for i in range(SIZE):
-    for perm in size_permutations:
-        if unique(perm):
-            perms.append(perm)
-            break
-print('cube36.py x: perms =', perms)
-print('is solution?', is_solution(perms))
-print_board(perms)
+    # Verify that all the pieces are unique.
+    pieces = set()
+    for row, perm in enumerate(perms):
+        board_row = BOARD_HEIGHTS[row]
+        for column in range(SIZE):
+            index = perm[column]
+            color = COLORS[index - 1]
+            height = board_row[column]
+            # print(row, column, color, height)
+            pieces.add(color + height)
+    return len(pieces) == len(perms) * SIZE
+
+for p1 in size_permutations:
+    for p2 in size_permutations:
+        if not solution([p1, p2]):
+            continue
+        for p3 in size_permutations:
+            if not solution([p1, p2, p3]):
+                continue
+            for p4 in size_permutations:
+                if not solution([p1, p2, p3, p4]):
+                    continue
+                for p5 in size_permutations:
+                    if not solution([p1, p2, p3, p4, p5]):
+                        continue
+                    for p6 in size_permutations:
+                        ps = [p1, p2, p3, p4, p5, p6]
+                        if solution(ps):
+                            print_board(ps)
+                            sys.exit()
