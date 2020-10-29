@@ -1,9 +1,9 @@
 from itertools import permutations
+#import sys
 from typing import Iterator, List, Tuple
 
-Colors = List[str]
-Board = List[Colors]
-Sizes = Iterator[Tuple[int, ...]]  # returned by permutations
+Permutation = Tuple[int, ...]
+Permutations = List[Permutation]
 
 # These numbers represent the size of the piece
 # that will fit at each board position.
@@ -19,37 +19,49 @@ BOARD_HEIGHTS = [
 SIZE = len(BOARD_HEIGHTS)
 COLORS = ['R', 'O', 'Y', 'G', 'B', 'P']
 LENGTHS = range(1, SIZE + 1)
-size_permutations: Sizes = permutations(range(1, SIZE + 1))
 
-board = [[' '] * SIZE for _ in range(SIZE)]
+# There are 720 of these which is SIZE factorial.
+# Can only iterate over an iterator once.
+# Realizing this as a list enables iterating over multiple times.
+size_permutations: Permutations = list(permutations(range(1, SIZE + 1)))
 
-def is_solution(board: Board) -> bool:
-    for row in range(SIZE):
-        board_row = board[row]
-        if len(set(board_row)) != SIZE:
-            return False
-    return True
+# Pick the first SIZE of these with no column duplications.
+perms: Permutations = []
 
-def print_board(board: Board) -> None:
-    for row in range(SIZE):
-        board_row = board[row]
-        row_heights = BOARD_HEIGHTS[row]
+def is_solution(perms: Permutations) -> bool:
+    pieces = set()
+    for row, pick in enumerate(perms):
+        board_row = BOARD_HEIGHTS[row]
+        for column in range(SIZE):
+            index = pick[column]
+            color = COLORS[index - 1]
+            height = board_row[column]
+            pieces.add(color + height)
+    return len(pieces) == SIZE * SIZE
+
+def print_board(perms: Permutations) -> None:
+    for row, perm in enumerate(perms):
+        board_row = BOARD_HEIGHTS[row]
         s = ''
         for column in range(SIZE):
-            s += board_row[column] + row_heights[column] + ' '
+            index = perm[column]
+            color = COLORS[index - 1]
+            height = board_row[column]
+            s += color + height + ' '
         print(s)
 
-for perm in size_permutations:
-    print('cube36.py x: perm =', perm)
-    color_map: Colors = list(map(lambda size: COLORS[size - 1], perm))
-    for row in range(SIZE):
-        board_row = board[row]
-        row_heights = BOARD_HEIGHTS[row]
-        for column in range(SIZE):
-            height = int(row_heights[column])
-            color = color_map[height - 1]
-            board_row[column] = color
-        board[row] = board_row
-    if is_solution(board):
-        print_board(board)
-        break
+def unique(perm: Permutation):
+    for other_perm in perms:
+        for i in range(SIZE):
+            if other_perm[i] == perm[i]:
+                return False
+    return True
+
+for i in range(SIZE):
+    for perm in size_permutations:
+        if unique(perm):
+            perms.append(perm)
+            break
+print('cube36.py x: perms =', perms)
+print('is solution?', is_solution(perms))
+print_board(perms)
