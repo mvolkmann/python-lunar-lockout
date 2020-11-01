@@ -6,6 +6,58 @@ from lunar_lockout import Action, LunarLockout as Game, State
 
 DEBUG = False
 
+solution = None
+
+def optimize(state: State, actions: List[Action]) -> List[Action]:
+    """Look for unnecessary actions and remove them."""
+    for i in range(len(actions) - 1):
+        # Create a copy of actions with the i'th action removed.
+        actions_copy = actions.copy()
+        del actions_copy[i]
+
+        try:
+            # Replay these actions.
+            state_copy = state.copy()
+            for action in actions_copy:
+                state_copy = Game.take_action(state_copy, action)
+
+            # If the puzzle can be solved without that action,
+            # use these actions.
+            if Game.is_solved(state_copy):
+                return actions_copy
+        except ValueError:
+            pass  # ingore since we are just trying alternate solutions
+
+    return actions
+
+def report() -> None:
+    global solution
+    if solution:
+        solution = optimize(state, solution)
+        Game.print_actions('Solution:', solution)
+    else:
+        print('No solution found.')
+
+def solve(state: State, actions_taken: List[Action]) -> None:
+    """Solve a puzzle with given starting State."""
+    global solution
+
+    if visited(state):
+        return
+
+    if Game.is_solved(state):
+        solution = actions_taken
+        return
+
+    new_actions = Game.get_possible_actions(state)
+    for new_action in new_actions:
+        if solution:
+            return
+        if DEBUG:
+            Game.print_state(state)
+        new_state = Game.take_action(state, new_action)
+        solve(new_state, [*actions_taken, new_action])  # recursive call
+
 def visited(state: State) -> bool:
     """Determine if a given State has already been visited."""
     global visited_states
@@ -15,39 +67,20 @@ def visited(state: State) -> bool:
         visited_states.add(key)
     return seen
 
-def solve(state: State, solution: List[Action]) -> None:
-    """Solve a puzzle with given starting State."""
-    global solved
-
-    if visited(state):
-        return
-
-    if Game.is_solved(state):
-        solved = True  # prevents further actions
-        Game.print_actions('\nSolution:', solution)
-        return
-
-    actions = Game.get_possible_actions(state)
-
-    for action in actions:
-        if solved:
-            return
-        if DEBUG:
-            Game.print_state(state)
-        new_state = Game.take_action(action, state)
-        solve(new_state, [*solution, action])  # recursive call
-
 puzzles = Game.load_puzzles('lunar_lockout.csv')
 
+visited_states: Set[str] = set()
 for i in range(1, len(puzzles) + 1):
     state = puzzles[i]
     print('\nPuzzle #' + str(i))
     Game.print_state(state)
-    solved = False
-    visited_states: Set[str] = set()
+    solution = None
+    visited_states.clear()
     solve(state, [])
+    report()
 
 # Solve a single puzzle instead of all.
-# state = puzzles[1]
-# print_puzzle(state)
+# state = puzzles[36]
+# Game.print_state(state)
 # solve(state, [])
+# report()

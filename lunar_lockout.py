@@ -72,12 +72,13 @@ def _make_position(x: str, y: str) -> Position:
     """Create a Position for x and y string values."""
     return (int(x), int(y))
 
-def _print_action(label: str, action: Action) -> None:
-    """Print a given Action."""
-    index, direction = action
-    print(label, robot_names[index], direction_map[direction])
-
 class LunarLockout:
+    @staticmethod
+    def action_string(action: Action) -> str:
+        """Print a given Action."""
+        index, direction = action
+        return robot_names[index] + ' ' + direction_map[direction]
+
     @staticmethod
     def get_possible_actions(robots: State) -> List[Action]:
         """Get all the possible actions that can be taken in a given State."""
@@ -119,7 +120,7 @@ class LunarLockout:
         """Print a list of Actions."""
         print(label)
         for action in actions:
-            _print_action('  ', action)
+            print('  ', LunarLockout.action_string(action))
 
     @staticmethod
     def print_state(robots: State) -> None:
@@ -139,9 +140,9 @@ class LunarLockout:
         return ''.join(map(lambda pos: f'{pos[0]}{pos[1]}', robots))
 
     @staticmethod
-    def take_action(action: Action, robots: State) -> State:
+    def take_action(robots: State, action: Action) -> State:
         """Take an Action on a State and return a new State."""
-        # print('.', end='') # print a dot for each action attempted
+        # print('.', end='')  # print a dot for each action attempted
 
         robot_index, direction = action
 
@@ -174,7 +175,8 @@ class LunarLockout:
                     blocker = position
 
         if blocker is None:
-            raise ValueError('invalid move')
+            raise ValueError('invalid move ' +
+                             LunarLockout.action_string(action))
 
         new_robots = robots.copy()
         c, r = blocker
