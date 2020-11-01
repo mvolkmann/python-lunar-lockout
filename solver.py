@@ -24,7 +24,7 @@ def optimize(state: State, actions: List[Action]) -> List[Action]:
             # If the puzzle can be solved without that action,
             # use these actions.
             if Game.is_solved(state_copy):
-                return actions_copy
+                return optimize(state, actions_copy)
         except ValueError:
             pass  # ingore since we are just trying alternate solutions
 
@@ -70,6 +70,7 @@ def visited(state: State) -> bool:
 puzzles = Game.load_puzzles('lunar_lockout.csv')
 
 visited_states: Set[str] = set()
+
 for i in range(1, len(puzzles) + 1):
     state = puzzles[i]
     print('\nPuzzle #' + str(i))
