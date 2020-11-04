@@ -65,17 +65,17 @@ def _get_cell(robots: State, column: int, row: int) -> str:
         c, r = position
         if c == column and r == row:
             return robot_ids[index]
-    is_center = column == CENTER and row == CENTER
+    is_center = column == row == CENTER
     return '#' if is_center else ' '
 
 def _make_position(x: str, y: str) -> Position:
-    """Create a Position for x and y string values."""
+    """Create a Position from x and y string values."""
     return (int(x), int(y))
 
 class LunarLockout:
     @staticmethod
     def action_string(action: Action) -> str:
-        """Print a given Action."""
+        """Get string representation of an Action."""
         index, direction = action
         return robot_names[index] + ' ' + direction_map[direction]
 
@@ -93,7 +93,7 @@ class LunarLockout:
     def is_solved(robots: State) -> bool:
         """Determine if a State represents a solved puzzle."""
         column, row = robots[0]  # red robot
-        return column == CENTER and row == CENTER
+        return column == row == CENTER
 
     @staticmethod
     def load_puzzles(file_path: str) -> Dict[int, State]:
