@@ -90,6 +90,10 @@ class LunarLockout:
         return actions
 
     @staticmethod
+    def initialize() -> None:
+        pass
+
+    @staticmethod
     def is_solved(robots: State) -> bool:
         """Determine if a State represents a solved puzzle."""
         column, row = robots[0]  # red robot
