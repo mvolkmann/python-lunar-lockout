@@ -23,8 +23,6 @@ direction_map = {
 }
 directions = direction_map.keys()
 
-last_direction = None
-
 def _place_pieces(board: State, name: str, coords: str) -> List[Position]:
     """Set the positions for a single kind of piece."""
     i = 0
@@ -37,33 +35,9 @@ def _place_pieces(board: State, name: str, coords: str) -> List[Position]:
         i += 2
     return positions
 
-def _process_vector(vector: List[str], direction: str) -> bool:
-    global last_direction
-
-    # print('tilt.py x: initial vector =', vector)
-    has_hole = TARGET in vector
-
-    # Move the pieces in the vector to the left.
-    target = 0
-    for index in range(SIZE):
-        piece = vector[index]
-        is_blue = piece == 'B'
-        is_green = piece == 'G'
-        # if index > target and (is_blue or is_green):
-        if is_blue or is_green:
-            vector[index] = ' '
-            in_hole = has_hole and target <= CENTER and index > CENTER
-            if not in_hole:
-                vector[target] = piece
-                target += 1
-                last_direction = direction
-            elif is_blue:  # not valid for blue to go in hole
-                return False
-        elif piece == 'X':
-            target = index + 1
-    return True
-
 class Tilt:
+    last_direction = None
+
     @staticmethod
     def action_string(action: Action) -> str:
         """Get string representation of an Action."""
@@ -72,13 +46,11 @@ class Tilt:
     @staticmethod
     def get_possible_actions(board: State) -> List[Action]:
         """Get all the possible actions that can be taken in a given State."""
-        global last_direction
-        return list(filter(lambda d: d != last_direction, directions))
+        return list(filter(lambda d: d != Tilt.last_direction, directions))
 
     @staticmethod
     def initialize() -> None:
-        global last_direction
-        last_direction = None
+        Tilt.last_direction = None
 
     @staticmethod
     def is_solved(board: State) -> bool:
@@ -162,7 +134,7 @@ class Tilt:
             if forward:
                 vector.reverse()
 
-            valid = _process_vector(vector, direction)
+            valid = Tilt._process_vector(vector, direction)
             if not valid:
                 return board
 
@@ -178,3 +150,27 @@ class Tilt:
                     new_board[row][column] = vector[row]
 
         return new_board
+
+    @staticmethod
+    def _process_vector(vector: List[str], direction: str) -> bool:
+        has_hole = TARGET in vector
+
+        # Move the pieces in the vector to the left.
+        target = 0
+        for index in range(SIZE):
+            piece = vector[index]
+            is_blue = piece == 'B'
+            is_green = piece == 'G'
+            # if index > target and (is_blue or is_green):
+            if is_blue or is_green:
+                vector[index] = ' '
+                in_hole = has_hole and target <= CENTER and index > CENTER
+                if not in_hole:
+                    vector[target] = piece
+                    target += 1
+                    Tilt.last_direction = direction
+                elif is_blue:  # not valid for blue to go in hole
+                    return False
+            elif piece == 'X':
+                target = index + 1
+        return True

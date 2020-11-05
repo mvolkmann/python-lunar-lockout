@@ -1,7 +1,7 @@
 # global-statement: Using the global statement
 # pylint: disable=W0603
 
-#import sys
+import sys
 from typing import List, Set
 #from lunar_lockout import Action, LunarLockout as Game, State
 from tilt import Action, Tilt as Game, State
@@ -39,6 +39,7 @@ def report() -> None:
         Game.print_actions('Solution:', solution)
     else:
         print('No solution found.')
+        sys.exit(1)
 
 def solve(state: State, actions_taken: List[Action]) -> None:
     """Solve a puzzle with given starting State."""
