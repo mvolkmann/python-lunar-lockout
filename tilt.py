@@ -56,11 +56,9 @@ class Tilt:
     def is_solved(board: State) -> bool:
         """Determine if a State represents a solved puzzle."""
         # Are there no green pieces left?
-        # TODO: Make this more efficient!
         for row in range(SIZE):
-            for column in range(SIZE):
-                if board[row][column] == 'G':
-                    return False
+            if 'G' in board[row]:
+                return False
         return True
 
     @staticmethod
