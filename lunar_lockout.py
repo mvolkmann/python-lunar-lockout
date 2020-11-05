@@ -100,10 +100,10 @@ class LunarLockout:
         return column == row == CENTER
 
     @staticmethod
-    def load_puzzles(file_path: str) -> Dict[int, State]:
+    def load_puzzles() -> Dict[int, State]:
         """Load a set of puzzles from a file."""
         puzzles = {}
-        with open(file_path) as csvfile:
+        with open('lunar_lockout.csv') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 number, coords = row

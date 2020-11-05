@@ -64,10 +64,10 @@ class Tilt:
         return True
 
     @staticmethod
-    def load_puzzles(file_path: str) -> Dict[int, State]:
+    def load_puzzles() -> Dict[int, State]:
         """Load a set of puzzles from a file."""
         puzzles = {}
-        with open(file_path) as csvfile:
+        with open('tilt.csv') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
                 number, blockers, greens, blues = row

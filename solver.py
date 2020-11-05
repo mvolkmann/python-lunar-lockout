@@ -75,8 +75,7 @@ def visited(state: State) -> bool:
         visited_states.add(key)
     return seen
 
-#puzzles = Game.load_puzzles('lunar_lockout.csv')
-puzzles = Game.load_puzzles('tilt.csv')
+puzzles = Game.load_puzzles()
 
 visited_states: Set[str] = set()
 
