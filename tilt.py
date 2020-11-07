@@ -1,6 +1,7 @@
 import csv
 import math
-from typing import cast, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
+from share import direction_map, directions
 
 Action = str  # direction letter
 # The outer list holds rows described by inner lists.
@@ -15,14 +16,7 @@ SIZE = 5
 CENTER = math.floor(SIZE / 2)
 TARGET = 'O'
 
-direction_map = {
-    'D': 'down',
-    'L': 'left',
-    'R': 'right',
-    'U': 'up'
-}
-directions = cast(List[Action], direction_map.keys())
-
+#directions = cast(List[Action], direction_map.keys())
 
 def _place_pieces(board: State, name: str, coords: str) -> List[Position]:
     """Set the positions for a single kind of piece."""

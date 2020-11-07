@@ -1,6 +1,7 @@
 import csv
 import math
 from typing import Dict, List, Optional, Tuple
+from share import direction_deltas, direction_map, directions
 
 Action = Tuple[int, str]  # robot index and direction
 Position = Tuple[int, int]  # column and row one-based indexes
@@ -14,22 +15,6 @@ TARGET = '#'
 # Order of robots in State is same as order of robot_ids.
 robot_ids = ('R', 'O', 'Y', 'G', 'B', 'P')
 robot_names = ('red', 'orange', 'yellow', 'green', 'blue', 'purple')
-
-# These are dx and dy values for directions.
-direction_deltas = {
-    'D': (0, 1),
-    'L': (-1, 0),
-    'R': (1, 0),
-    'U': (0, -1)
-}
-direction_map = {
-    'D': 'down',
-    'L': 'left',
-    'R': 'right',
-    'U': 'up'
-}
-directions = direction_map.keys()
-
 
 def _can_move(robots: State, robot_index: int, direction: str) -> bool:
     """Determine whether a robot can move in a direction in a given State."""
