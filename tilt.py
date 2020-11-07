@@ -1,6 +1,6 @@
 import csv
 import math
-from typing import Dict, List, Tuple
+from typing import cast, Dict, List, Optional, Tuple
 
 Action = str  # direction letter
 # The outer list holds rows described by inner lists.
@@ -21,7 +21,7 @@ direction_map = {
     'R': 'right',
     'U': 'up'
 }
-directions = direction_map.keys()
+directions = cast(List[Action], direction_map.keys())
 
 def _place_pieces(board: State, name: str, coords: str) -> List[Position]:
     """Set the positions for a single kind of piece."""
@@ -36,7 +36,7 @@ def _place_pieces(board: State, name: str, coords: str) -> List[Position]:
     return positions
 
 class Tilt:
-    last_direction = None
+    last_direction: Optional[Action] = None
 
     @staticmethod
     def action_string(action: Action) -> str:
@@ -44,7 +44,7 @@ class Tilt:
         return 'tilt ' + direction_map[action]
 
     @staticmethod
-    def get_possible_actions(board: State) -> List[Action]:
+    def get_possible_actions(_: State) -> List[Action]:
         """Get all the possible actions that can be taken in a given State."""
         return list(filter(lambda d: d != Tilt.last_direction, directions))
 
@@ -115,8 +115,8 @@ class Tilt:
         for row in range(SIZE):
             new_board.append(board[row].copy())
 
-        forward = direction == 'R' or direction == 'D'
-        horizontal = direction == 'L' or direction == 'R'
+        forward = direction in ('R', 'D')
+        horizontal = direction in ('L', 'R')
 
         for index in range(SIZE):
             # Create a vector of the pieces being considered
@@ -162,7 +162,7 @@ class Tilt:
             # if index > target and (is_blue or is_green):
             if is_blue or is_green:
                 vector[index] = ' '
-                in_hole = has_hole and target <= CENTER and index > CENTER
+                in_hole = has_hole and target <= CENTER < index
                 if not in_hole:
                     vector[target] = piece
                     target += 1

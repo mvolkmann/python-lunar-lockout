@@ -55,8 +55,6 @@ def solution(perms: Permutations) -> bool:
         for perm in perms:
             color_number = perm[column]
             if color_number in color_numbers:
-                # log(perms,
-                #     f'duplicate color {COLORS[color_number - 1]} in column {column + 1}')
                 return False
             color_numbers.add(color_number)
         color_numbers.clear()

@@ -3,8 +3,8 @@
 
 import sys
 from typing import List, Set
-#from lunar_lockout import Action, LunarLockout as Game, State
-from tilt import Action, Tilt as Game, State
+from lunar_lockout import Action, LunarLockout as Game, State
+#from tilt import Action, Tilt as Game, State
 
 DEBUG = False
 

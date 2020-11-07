@@ -179,8 +179,8 @@ class LunarLockout:
                     blocker = position
 
         if blocker is None:
-            raise ValueError('invalid move ' +
-                             LunarLockout.action_string(action))
+            raise ValueError(
+                'invalid move ' + LunarLockout.action_string(action))
 
         new_robots = robots.copy()
         c, r = blocker
