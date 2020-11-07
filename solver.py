@@ -10,6 +10,7 @@ DEBUG = False
 
 solution = None
 
+
 def optimize(state: State, actions: List[Action]) -> List[Action]:
     """Look for unnecessary actions and remove them."""
     for i in range(len(actions) - 1):
@@ -32,6 +33,7 @@ def optimize(state: State, actions: List[Action]) -> List[Action]:
 
     return actions
 
+
 def report() -> None:
     global solution
     if solution:
@@ -40,6 +42,7 @@ def report() -> None:
     else:
         print('No solution found.')
         sys.exit(1)
+
 
 def solve(state: State, actions_taken: List[Action]) -> None:
     """Solve a puzzle with given starting State."""
@@ -66,6 +69,7 @@ def solve(state: State, actions_taken: List[Action]) -> None:
         new_state = Game.take_action(state, action)
         solve(new_state, [*actions_taken, action])  # recursive call
 
+
 def visited(state: State) -> bool:
     """Determine if a given State has already been visited."""
     global visited_states
@@ -74,6 +78,7 @@ def visited(state: State) -> bool:
     if not seen:
         visited_states.add(key)
     return seen
+
 
 puzzles = Game.load_puzzles()
 

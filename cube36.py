@@ -27,9 +27,11 @@ BOARD_HEIGHTS = [
 COLORS = ['P', 'Y', 'B', 'O', 'R', 'G']
 SIZE = len(BOARD_HEIGHTS)
 
+
 def log(perms: Permutations, text: str) -> None:
     if len(perms) == 6:
         print(text)
+
 
 def print_board(perms: Permutations) -> None:
     if len(perms) < 6:
@@ -44,6 +46,7 @@ def print_board(perms: Permutations) -> None:
             height = board_row[column]
             s += color + height + ' '
         print(s)
+
 
 def solution(perms: Permutations) -> bool:
     # log(perms, '\nEvaluating:')
@@ -73,8 +76,10 @@ def solution(perms: Permutations) -> bool:
             pieces.add(piece)
     return True
 
+
 def keep_perm(perm: Permutation) -> bool:
     return all(map(lambda t: t[1] != t[0] + 1, enumerate(perm)))
+
 
 # There are 720 of these which is SIZE factorial.
 # We can only iterate over an iterator once.

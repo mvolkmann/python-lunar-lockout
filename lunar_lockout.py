@@ -30,6 +30,7 @@ direction_map = {
 }
 directions = direction_map.keys()
 
+
 def _can_move(robots: State, robot_index: int, direction: str) -> bool:
     """Determine whether a robot can move in a direction in a given State."""
     column, row = robots[robot_index]
@@ -59,6 +60,7 @@ def _can_move(robots: State, robot_index: int, direction: str) -> bool:
     # print('game.py can_move: can =', can)
     return can
 
+
 def _get_cell(robots: State, column: int, row: int) -> str:
     """Get the character to print for a given board cell."""
     for index, position in enumerate(robots):
@@ -68,9 +70,11 @@ def _get_cell(robots: State, column: int, row: int) -> str:
     is_center = column == row == CENTER
     return '#' if is_center else ' '
 
+
 def _make_position(x: str, y: str) -> Position:
     """Create a Position from x and y string values."""
     return (int(x), int(y))
+
 
 class LunarLockout:
     @staticmethod
