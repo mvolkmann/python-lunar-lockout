@@ -14,6 +14,7 @@ solution = None
 
 def optimize(state: State, actions: List[Action]) -> List[Action]:
     """Look for unnecessary actions and remove them."""
+    print('solver.py optimize: len(actions) =', len(actions))
     for i in range(len(actions) - 1):
         # Create a copy of actions with the i'th action removed.
         actions_copy = actions.copy()
@@ -38,7 +39,9 @@ def optimize(state: State, actions: List[Action]) -> List[Action]:
 def report() -> None:
     global solution
     if solution:
+        print('solver.py report: optimizing')
         solution = optimize(state, solution)
+        print('solver.py report: optimized')
         Game.print_actions('Solution:', solution)
     else:
         print('No solution found.')
@@ -55,6 +58,8 @@ def solve(state: State, actions_taken: List[Action]) -> None:
 
     if Game.is_solved(state):
         solution = actions_taken
+        print('solver.py solve: final board state is')
+        Game.print_state(state)
         return
 
     # print('solver.py solve: state follows')

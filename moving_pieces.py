@@ -11,7 +11,7 @@ State = Dict[str, Position]  # keys are piece ids and values are positions
 COLUMNS = 5
 ROWS = 4
 
-sys.setrecursionlimit(10**5)
+sys.setrecursionlimit(10**5)  # 10**4 is not enough
 
 # Order of pieces in State is same as order of piece_ids.
 piece_ids = list('ABCDEFGHJ')
@@ -94,7 +94,7 @@ class MovingPieces:
     @staticmethod
     def is_solved(state: State) -> bool:
         """Determine if a State represents a solved puzzle."""
-        return state['A'] == (3, 1) and state['D'] == (1, 1) and state['E'] == (1, 2)
+        return state['A'] == (4, 1) and state['D'] == (1, 1) and state['E'] == (1, 2)
 
     @staticmethod
     def load_puzzles() -> Dict[int, State]:
