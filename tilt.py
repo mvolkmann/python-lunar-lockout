@@ -18,6 +18,7 @@ TARGET = 'O'
 
 #directions = cast(List[Action], direction_map.keys())
 
+
 def _place_pieces(board: State, name: str, coords: str) -> List[Position]:
     """Set the positions for a single kind of piece."""
     i = 0

@@ -14,7 +14,8 @@ solution = None
 
 def optimize(state: State, actions: List[Action]) -> List[Action]:
     """Look for unnecessary actions and remove them."""
-    print('solver.py optimize: len(actions) =', len(actions))
+    # TODO: This works poorly for the MovingPieces puzzle!
+    # TODO: The solution it gives requires 572, but it can be solved in 59.
     for i in range(len(actions) - 1):
         # Create a copy of actions with the i'th action removed.
         actions_copy = actions.copy()
@@ -39,9 +40,7 @@ def optimize(state: State, actions: List[Action]) -> List[Action]:
 def report() -> None:
     global solution
     if solution:
-        print('solver.py report: optimizing')
         solution = optimize(state, solution)
-        print('solver.py report: optimized')
         Game.print_actions('Solution:', solution)
     else:
         print('No solution found.')
@@ -53,25 +52,26 @@ def solve(state: State, actions_taken: List[Action]) -> None:
     global solution
 
     if visited(state):
-        # print('solver.py solve: already visited')
+        #print('solver.py solve: already visited')
         return
 
     if Game.is_solved(state):
         solution = actions_taken
-        print('solver.py solve: final board state is')
-        Game.print_state(state)
+        # print('solver.py solve: final board state is')
+        # Game.print_state(state)
         return
 
-    # print('solver.py solve: state follows')
+    #print('solver.py solve: actions_taken =', actions_taken)
+    #print('solver.py solve: state follows')
     # Game.print_state(state)
     new_actions = Game.get_possible_actions(state)
-    # print('solver.py solve: new_actions =', new_actions)
+    #print('solver.py solve: new_actions =', new_actions)
     for action in new_actions:
         if solution:
             return
         if DEBUG:
             Game.print_state(state)
-        # print('solver.py solve: trying =', action)
+        #print('solver.py solve: trying =', action)
         new_state = Game.take_action(state, action)
         solve(new_state, [*actions_taken, action])  # recursive call
 
@@ -83,6 +83,7 @@ def visited(state: State) -> bool:
     seen = key in visited_states
     if not seen:
         visited_states.add(key)
+        #print('solver.py visited: key =', key)
     return seen
 
 

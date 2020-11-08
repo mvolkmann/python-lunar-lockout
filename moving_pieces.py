@@ -10,6 +10,8 @@ State = Dict[str, Position]  # keys are piece ids and values are positions
 
 COLUMNS = 5
 ROWS = 4
+SINGLE_PIECES = ['B', 'C']
+VERTICAL_PIECES = ['F', 'G', 'H', 'J']
 
 sys.setrecursionlimit(10**5)  # 10**4 is not enough
 
@@ -28,6 +30,35 @@ piece_sizes = {
     'J': (1, 2)
 }
 
+
+def _can_move(state: State, piece_id: str, direction: str) -> bool:
+    """Determine whether a piece can move in a direction in a given State."""
+    # Get the one or two cells that are the target of the move.
+    target_cells: List[Position] = []
+
+    column, row = state[piece_id]
+    width, height = piece_sizes[piece_id]
+
+    if direction == 'L' and column > 1:
+        target_cells = [(column - 1, row + i)
+                        for i in range(height)]
+    elif direction == 'R' and column + width <= COLUMNS:
+        target_cells = [(column + width, row + i)
+                        for i in range(height)]
+    elif direction == 'D' and row + height <= ROWS:
+        target_cells = [(column + i, row + height)
+                        for i in range(width)]
+    elif direction == 'U' and row > 1:
+        target_cells = [(column + i, row - 1)
+                        for i in range(width)]
+
+    if not target_cells:
+        return False
+
+    # Determine if the target cells are empty.
+    return all(map(lambda cell: _is_empty(state, cell), target_cells))
+
+
 def _get_board(state: State) -> Board:
     """Get the character to print for a given board cell."""
     board = [[' '] * COLUMNS for _ in range(ROWS)]
@@ -38,6 +69,7 @@ def _get_board(state: State) -> Board:
             for r in range(height):
                 board[row - 1 + r][column - 1 + c] = piece_id
     return board
+
 
 def _is_empty(state: State, cell: Position) -> bool:
     c, r = cell
@@ -106,22 +138,36 @@ class MovingPieces:
                 number, coords = row
                 if not number.startswith('#'):
                     state = {}
-                    for i in range(len(piece_ids)):
-                        piece_id = piece_ids[i]
+                    for i, piece_id in enumerate(piece_ids):
                         ci = i * 2
                         state[piece_id] = (
                             int(coords[ci]), int(coords[ci + 1]))
                     puzzles[int(number)] = state
         return puzzles
 
-    @ staticmethod
+    @staticmethod
     def print_actions(label: str, actions: List[Action]) -> None:
         """Print a list of Actions."""
-        print(label)
-        for i, action in enumerate(actions):
-            print(f'  {i}) {MovingPieces.action_string(action)}')
 
-    @ staticmethod
+        print(label)
+
+        skip_next = False
+        step = 0
+        end = len(actions) - 1
+        for i, action in enumerate(actions):
+            if skip_next:
+                skip_next = False
+                continue
+
+            s = MovingPieces.action_string(action)
+            skip_next = i < end and actions[i + 1] == action
+            if skip_next:
+                s += ' twice'
+
+            step += 1
+            print(f'  {step}) {s}')
+
+    @staticmethod
     def print_state(state: State) -> None:
         """Print a State."""
         board = _get_board(state)
@@ -131,24 +177,37 @@ class MovingPieces:
             print('| ' + ' | '.join(board[row]) + ' |')
         print(border)
 
-    @ staticmethod
+    @staticmethod
     def state_string(state: State) -> str:
         """Get the string representation of a State."""
-        s = ''
-        for position in state.values():
-            column, row = position
-            s += f'{column}{row}'
-        return s
 
-    @ staticmethod
+        def position_string(piece_id: str) -> str:
+            column, row = state[piece_id]
+            return f'{column}{row}'
+
+        s_positions: List[str] = list(map(position_string, SINGLE_PIECES))
+        v_positions: List[str] = list(map(position_string, VERTICAL_PIECES))
+        s_positions.sort()
+        v_positions.sort()
+        return position_string('A') \
+            + position_string('D') \
+            + position_string('E') \
+            + ''.join(s_positions) \
+            + ''.join(v_positions)
+
+    @staticmethod
     def take_action(state: State, action: Action) -> State:
         """Take an Action on a State and return a new State."""
         # print('.', end='')  # print a dot for each action attempted
 
         new_state = state.copy()
         piece_id, direction = action
-        column, row = state[piece_id]
 
+        if not _can_move(state, piece_id, direction):
+            raise ValueError(
+                'invalid move ' + MovingPieces.action_string(action))
+
+        column, row = state[piece_id]
         if direction == 'L':
             new_state[piece_id] = (column - 1, row)
         elif direction == 'R':

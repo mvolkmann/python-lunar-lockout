@@ -16,6 +16,7 @@ TARGET = '#'
 robot_ids = ('R', 'O', 'Y', 'G', 'B', 'P')
 robot_names = ('red', 'orange', 'yellow', 'green', 'blue', 'purple')
 
+
 def _can_move(robots: State, robot_index: int, direction: str) -> bool:
     """Determine whether a robot can move in a direction in a given State."""
     column, row = robots[robot_index]
