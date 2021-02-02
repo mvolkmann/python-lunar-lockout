@@ -32,7 +32,7 @@ def optimize(state: State, actions: List[Action]) -> List[Action]:
             if Game.is_solved(state_copy):
                 return optimize(state, actions_copy)
         except ValueError:
-            pass  # ingore since we are just trying alternate solutions
+            pass  # ignore since we are just trying alternate solutions
 
     return actions
 
